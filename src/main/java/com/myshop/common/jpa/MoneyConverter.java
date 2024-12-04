@@ -2,7 +2,7 @@ package com.myshop.common.jpa;
 
 import com.myshop.common.model.Money;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 
 public class MoneyConverter implements AttributeConverter<Money, Integer> {
 

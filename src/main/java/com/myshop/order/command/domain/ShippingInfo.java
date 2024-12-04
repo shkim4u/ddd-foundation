@@ -2,7 +2,7 @@ package com.myshop.order.command.domain;
 
 import com.myshop.common.model.Address;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Embeddable
 public class ShippingInfo {

@@ -1,6 +1,6 @@
 package com.myshop.board.domain;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "article")

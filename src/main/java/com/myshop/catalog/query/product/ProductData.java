@@ -6,7 +6,7 @@ import com.myshop.catalog.command.domain.product.ProductId;
 import com.myshop.common.jpa.MoneyConverter;
 import com.myshop.common.model.Money;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

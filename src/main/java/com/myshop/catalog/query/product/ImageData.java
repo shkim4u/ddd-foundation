@@ -1,6 +1,6 @@
 package com.myshop.catalog.query.product;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 import java.time.LocalDateTime;
 
 public class ImageData {

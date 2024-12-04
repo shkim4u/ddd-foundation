@@ -1,7 +1,7 @@
 package com.myshop.order.query.dto;
 
-import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.StaticMetamodel;
+import jakarta.persistence.metamodel.SingularAttribute;
+import jakarta.persistence.metamodel.StaticMetamodel;
 import java.time.LocalDateTime;
 
 @StaticMetamodel(OrderSummary.class)

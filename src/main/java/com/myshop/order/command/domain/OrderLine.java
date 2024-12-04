@@ -4,10 +4,10 @@ import com.myshop.catalog.command.domain.product.ProductId;
 import com.myshop.common.jpa.MoneyConverter;
 import com.myshop.common.model.Money;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
 
 @Embeddable
 public class OrderLine {

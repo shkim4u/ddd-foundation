@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.LockModeType;
+import jakarta.persistence.LockModeType;
 import java.util.Optional;
 import java.util.Set;
 

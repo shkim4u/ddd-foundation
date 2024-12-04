@@ -5,7 +5,7 @@ import com.myshop.common.jpa.EmailSetConverter;
 import com.myshop.common.model.Email;
 import com.myshop.common.model.EmailSet;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Random;
 import java.util.Set;
 

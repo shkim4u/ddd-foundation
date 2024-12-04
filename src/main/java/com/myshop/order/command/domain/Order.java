@@ -4,7 +4,7 @@ import com.myshop.common.event.Events;
 import com.myshop.common.jpa.MoneyConverter;
 import com.myshop.common.model.Money;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
