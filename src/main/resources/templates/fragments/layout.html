@@ -20,10 +20,10 @@
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.startsWith('/home') ? 'active' : ''}" href="/home">Home</a>
+          <a class="nav-link" th:classappend="${#httpServletRequest.requestURI?.startsWith('/home') ? 'active' : ''}" href="/home">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:classappend="${#httpServletRequest.requestURI.startsWith('/categories') ? 'active' : ''}" href="/categories">카테고리</a>
+          <a class="nav-link" th:classappend="${#httpServletRequest.requestURI?.startsWith('/categories') ? 'active' : ''}" href="/categories">카테고리</a>
         </li>
         <li class="nav-item" sec:authorize="!isAuthenticated()"><a href="/login" class="nav-link" >로그인</a></li>
         <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a href="/admin/main" class="nav-link" >관리자</a></li>

@@ -1,5 +1,6 @@
 package com.myshop.order.query.dao;
 
+import com.myshop.member.command.domain.MemberId;
 import com.myshop.order.query.dto.OrderSummary;
 import com.myshop.order.query.dto.OrderView;
 import org.junit.jupiter.api.Test;
@@ -86,5 +87,6 @@ class OrderSummaryDaoIT {
     @Test
     void findOrderView() {
         List<OrderView> result = orderSummaryDao.findOrderView("user1");
+//        List<OrderView> result = orderSummaryDao.findOrderView(MemberId.of("user1"));
     }
 }

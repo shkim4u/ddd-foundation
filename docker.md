@@ -1,5 +1,13 @@
-```
+* Windows
+```bash
+# Windows
 docker create --name mysql8 -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -v c:\work\mysqldata:/var/lib/mysql mysql:8.0.27
+```
+
+* MacOS / Linux
+```bash
+# Windows
+docker create --name mysql8 -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -v ~/mysqldata:/var/lib/mysql mysql:8.0.27
 ```
 
 docker start mysql8
