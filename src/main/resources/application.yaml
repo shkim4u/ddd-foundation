@@ -1,0 +1,70 @@
+spring:
+  profiles:
+    active: local
+---
+spring:
+  profiles:
+    group:
+      local: common
+---
+spring:
+  profiles:
+    group:
+      dev: common
+---
+spring:
+  application:
+    name: ddd-foundation
+  config:
+      activate:
+        on-profile: common
+  jpa:
+    database: mysql
+    #    properties:
+    #      hibernate:
+    #        hbm2ddl:
+    #          auto: update
+    show-sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: false
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  tomcat:
+    accept-count: 100
+    threads:
+      max: 200
+      min-spare: 100
+logging:
+  level:
+    root: INFO
+    com.myshop: DEBUG
+    org.springframework.security: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:mysql://localhost:3306/shop?characterEncoding=utf8
+    username: shopuser
+    password: shoppass
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_SCHEMA}?characterEncoding=utf8
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10

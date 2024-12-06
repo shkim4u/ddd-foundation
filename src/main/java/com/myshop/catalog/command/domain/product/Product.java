@@ -17,8 +17,7 @@ public class Product {
     private ProductId id;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "product_category",
-            joinColumns = @JoinColumn(name = "product_id"))
+    @CollectionTable(name = "product_category", joinColumns = @JoinColumn(name = "product_id"))
     private Set<CategoryId> categoryIds;
 
     private String name;
