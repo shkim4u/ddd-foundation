@@ -24,11 +24,14 @@ DDD START!의 재출간판인 [도메인 주도 개발 시작하기](https://www
 ### 사전 준비 사항
 
 1. `Java 17` 설치
-2. `Docker Desktop` 설치
+2. `Git` 설치
+3. `IntelliJ IDEA` 설치
+4. `Docker Desktop` 설치
    * 윈도우의 경우 `WSL2` 설치
-3. `Kind` 설치
-4. `kubectl` 설치
-5. `k9s` 설치
+5. `Kind` 설치
+6. `kubectl` 설치
+   * 
+7. `k9s` 설치
 
 ---
 
