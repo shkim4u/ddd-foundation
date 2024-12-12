@@ -3,6 +3,11 @@ VERSION:=$(shell cat build.gradle | grep "version =" | awk -F"'" '{print $$2}')
 
 .PHONY: build
 
+install-kind-linux:
+    @curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.25.0/kind-linux-amd64
+    @chmod +x ./kind
+    @sudo mv ./kind /usr/local/bin/kind
+
 create-cluster:
 	@kind create cluster --name ddd-foundation --config k8s/cluster/kind-cluster.yaml
 
