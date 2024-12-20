@@ -3,6 +3,7 @@ package com.myshop.order.command.domain;
 import com.myshop.common.event.Events;
 import com.myshop.common.jpa.MoneyConverter;
 import com.myshop.common.model.Money;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,7 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "purchase_order")
 @Access(AccessType.FIELD)
-public class Order {
+public class Order extends AbstractAggregateRoot<Order> {
     @EmbeddedId
     private OrderNo number;
 
@@ -51,7 +52,10 @@ public class Order {
         setShippingInfo(shippingInfo);
         this.state = state;
         this.orderDate = LocalDateTime.now();
-        Events.raise(new OrderPlacedEvent(number.getNumber(), orderer, orderLines, orderDate));
+        OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(number.getNumber(), orderer, orderLines, orderDate);
+        Events.raise(orderPlacedEvent);
+        // 도메인 이벤트 발행
+        registerEvent(orderPlacedEvent);
     }
 
     private void setNumber(OrderNo number) {
@@ -154,5 +158,14 @@ public class Order {
         if (state == OrderState.CANCELED) {
             throw new OrderAlreadyCanceledException();
         }
+    }
+
+    // 주문 상태 변경
+    public void changeOrderState(OrderState newState) {
+        if (this.state == OrderState.CANCELED) {
+            throw new IllegalStateException("Cannot change state of a canceled order");
+        }
+        this.state = newState;
+        registerEvent(new OrderStateChangedEvent(number.getNumber(), newState));
     }
 }

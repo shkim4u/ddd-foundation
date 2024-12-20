@@ -47,8 +47,9 @@ docker start mysql
 
 * MacOS, Linux
 ```bash
-docker run --name mysql -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -v ~/data/mysql:/var/lib/mysql mysql:8.0.27
-docker start mysql
+rm -rf ~/data/mysql/*
+docker run --rm --name mysql -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -v ~/data/mysql:/var/lib/mysql mysql:8.0.27
+#docker start mysql
 ```
 
 2. `IntelliJ IDEA`에서 `DDD Foundation` 애플리케이션 실행

@@ -13,6 +13,10 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    flywayVersion = '7.15.0'
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -28,6 +32,11 @@ dependencies {
     runtimeOnly 'mysql:mysql-connector-java:8.0.33'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Flyway.
+    implementation "org.flywaydb:flyway-core:${flywayVersion}"
+    implementation "org.flywaydb:flyway-mysql:8.3.0"
+
 }
 
 test {

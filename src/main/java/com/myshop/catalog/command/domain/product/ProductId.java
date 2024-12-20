@@ -10,7 +10,8 @@ import java.util.Objects;
 @Embeddable
 @Access(AccessType.FIELD)
 public class ProductId implements Serializable {
-    @Column(name = "product_id", columnDefinition = "varchar2(5 char)")
+    @Column(name = "product_id")
+//    @Column(name = "product_id", columnDefinition = "varchar2(5 char)")
     private String id;
 
     protected ProductId() {

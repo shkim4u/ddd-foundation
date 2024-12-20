@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>com.myshop.order.command.domain.Order</OriginalElement>
+  <nodes>
+    <node x="60.93781750444907" y="97.0">com.myshop.order.command.domain.ShippingInfo</node>
+    <node x="-113.06511908258847" y="312.6591068782827">com.myshop.order.command.domain.Order</node>
+    <node x="-262.8148304598541" y="262.65851672035745">javax.persistence.Entity</node>
+    <node x="182.97773740443967" y="534.776309591748">com.myshop.order.command.domain.Orderer</node>
+    <node x="-327.0" y="664.375220645962">org.springframework.data.domain.AbstractAggregateRoot</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.myshop.order.command.domain.Order" target="org.springframework.data.domain.AbstractAggregateRoot" relationship="GENERALIZATION">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="com.myshop.order.command.domain.Order" target="com.myshop.order.command.domain.Orderer" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="com.myshop.order.command.domain.Order" target="javax.persistence.Entity" relationship="REALIZATION">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="com.myshop.order.command.domain.Order" target="com.myshop.order.command.domain.ShippingInfo" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+  </edges>
+  <settings layout="Circular" zoom="1.3292307692307692" showDependencies="true" x="20.0" y="422.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
