@@ -10,8 +10,8 @@ DDD START!의 재출간판인 [도메인 주도 개발 시작하기](https://www
 3. `application.properties` -> `application.yaml`로 변경
 4. JPA Module이 설정되었는지 확인
    * IntelliJ IDEA에서 File → Project Structure → Modules로 이동합니다.
-   * 사용 중인 모듈이 "JPA"로 설정되어 있는지 확인합니다. 
-     * 모듈 우클릭 → Add Framework Support → "JPA"를 추가합니다.
+   * 사용 중인 모듈이 "JPA"로 설정되어 있는지 확인합니다.
+      * 모듈 우클릭 → Add Framework Support → "JPA"를 추가합니다.
 5. `JPA Buddy` 간단 사용
    * DDL 생성
    * ERD 생성
@@ -47,8 +47,9 @@ docker start mysql
 
 * MacOS, Linux
 ```bash
-docker run --name mysql -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -v ~/data/mysql:/var/lib/mysql mysql:8.0.27
-docker start mysql
+rm -rf ~/data/mysql/*
+docker run --rm --name mysql -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -v ~/data/mysql:/var/lib/mysql mysql:8.0.27
+#docker start mysql
 ```
 
 2. `IntelliJ IDEA`에서 `DDD Foundation` 애플리케이션 실행
