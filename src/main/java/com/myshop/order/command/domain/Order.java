@@ -53,7 +53,7 @@ public class Order extends AbstractAggregateRoot<Order> {
         this.state = state;
         this.orderDate = LocalDateTime.now();
         OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(number.getNumber(), orderer, orderLines, orderDate);
-        Events.raise(orderPlacedEvent);
+//        Events.raise(orderPlacedEvent);
         // 도메인 이벤트 발행
         registerEvent(orderPlacedEvent);
     }
