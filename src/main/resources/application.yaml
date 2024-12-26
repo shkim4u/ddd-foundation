@@ -16,8 +16,8 @@ spring:
   application:
     name: ddd-foundation
   config:
-      activate:
-        on-profile: common
+    activate:
+      on-profile: common
   jpa:
     database: mysql
     #    properties:
@@ -29,6 +29,17 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     open-in-view: false
+  flyway:
+    enabled: true
+    validate-migration-naming: true
+    locations: classpath:db/migration/common, classpath:db/migration/sample
+    # set clean-on-validation-error to true if you get flyway validation error during application startup
+    # this will clear the databases up and re-migrate from the scratch
+    clean-on-validation-error: true
+    baseline-on-migrate: true
+  sql:
+    init:
+      mode: never
 server:
   port: 8080
   servlet:
@@ -43,12 +54,15 @@ logging:
     root: INFO
     com.myshop: DEBUG
     org.springframework.security: DEBUG
-
 ---
 spring:
   config:
     activate:
       on-profile: local
+  flyway:
+    url: jdbc:mysql://localhost:3306/mysql?characterEncoding=utf8
+    user: root
+    password: root
   datasource:
     url: jdbc:mysql://localhost:3306/shop?characterEncoding=utf8
     username: shopuser
@@ -61,6 +75,10 @@ spring:
   config:
     activate:
       on-profile: dev
+  flyway:
+    url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/mysql?characterEncoding=utf8
+    user: root
+    password: ""
   datasource:
     url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_SCHEMA}?characterEncoding=utf8
     username: ${DATABASE_USERNAME}
