@@ -14,7 +14,15 @@ repositories {
 }
 
 ext {
+    springCloudVersion = '2021.0.3'
     flywayVersion = '7.15.0'
+    lombokVersion = '1.18.22'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 dependencies {
@@ -37,6 +45,14 @@ dependencies {
     implementation "org.flywaydb:flyway-core:${flywayVersion}"
     implementation "org.flywaydb:flyway-mysql:8.3.0"
 
+    // Lombok.
+    implementation("org.projectlombok:lombok:${lombokVersion}")
+    testImplementation("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+
+    // OpenFeign.
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 }
 
 test {

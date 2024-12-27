@@ -54,6 +54,18 @@ logging:
     root: INFO
     com.myshop: DEBUG
     org.springframework.security: DEBUG
+feign:
+  httpclient:
+    enabled: true
+    max-connections: 200
+    max-connections-per-route: 100
+  client:
+    config:
+      default:
+        connect-timeout: 3000
+        read-timeout: 3000
+      inventory:
+        endpoint: http://127.0.0.1:${server.port}
 ---
 spring:
   config:

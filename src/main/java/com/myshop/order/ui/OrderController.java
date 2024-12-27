@@ -10,6 +10,8 @@ import com.myshop.order.command.application.OrderRequest;
 import com.myshop.order.command.application.PlaceOrderService;
 import com.myshop.order.command.domain.OrderNo;
 import com.myshop.order.command.domain.OrdererService;
+import com.myshop.order.query.application.outboundservices.ExternalInventoryService;
+import com.myshop.order.query.view.InventoryView;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -30,13 +32,17 @@ public class OrderController {
     private ProductQueryService productQueryService;
     private PlaceOrderService placeOrderService;
     private OrdererService ordererService;
+    // [2024-12-27] 김상현: 재고 서비스 (외부 마이크로서비스)
+    private ExternalInventoryService externalInventoryService;
 
     public OrderController(ProductQueryService productQueryService,
                            PlaceOrderService placeOrderService,
-                           OrdererService ordererService) {
+                           OrdererService ordererService,
+                           ExternalInventoryService externalInventoryService) {
         this.productQueryService = productQueryService;
         this.placeOrderService = placeOrderService;
         this.ordererService = ordererService;
+        this.externalInventoryService = externalInventoryService;
     }
 
     @PostMapping("/orders/orderConfirm")
@@ -55,6 +61,8 @@ public class OrderController {
         for (int i = 0 ; i < orderRequest.getOrderProducts().size() ; i++) {
             OrderProduct op = orderRequest.getOrderProducts().get(i);
             ProductData prod = products.get(i);
+            // [2024-12-27] 김상현: 재고 조회
+            InventoryView inventoryView = externalInventoryService.getInventory(prod.getId().getId());
             totalAmounts += op.getQuantity() * prod.getPrice().getValue();
         }
         modelMap.addAttribute("totalAmounts", totalAmounts);
