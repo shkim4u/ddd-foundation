@@ -8,3 +8,5 @@ CREATE TABLE inventory
     price      INT          NULL,
     CONSTRAINT pk_inventory PRIMARY KEY (id)
 );
+
+CREATE INDEX idx_product_id ON inventory (product_id);
