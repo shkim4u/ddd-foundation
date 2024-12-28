@@ -52,7 +52,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/", "/home", "/categories/**", "/products/**").permitAll()
+                // [2024-12-28] 김상현: /inventory/** 추가 (Experimental)
+                .antMatchers("/", "/home", "/categories/**", "/products/**", "/inventory/**").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()

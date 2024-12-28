@@ -40,8 +40,12 @@ spring:
   sql:
     init:
       mode: never
+#  devtools.restart.enabled: false
+#  cloud.loadbalancer.enabled: false
 server:
+  address: 0.0.0.0  # 모든 네트워크 인터페이스에서 접근 허용
   port: 8080
+  internal-port: 8100
   servlet:
     context-path: /
   tomcat:
@@ -65,7 +69,9 @@ feign:
         connect-timeout: 3000
         read-timeout: 3000
       inventory:
-        endpoint: http://127.0.0.1:${server.port}
+        # hosts 파일 수정 필요
+#        endpoint: http://192.168.8.176:8080
+        endpoint: http://localhost:8100/
 ---
 spring:
   config:
