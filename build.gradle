@@ -54,6 +54,10 @@ dependencies {
     // OpenFeign.
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    // RabbitMQ.
+    implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit'
+    testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
 }
 
 test {

@@ -40,8 +40,24 @@ spring:
   sql:
     init:
       mode: never
-#  devtools.restart.enabled: false
-#  cloud.loadbalancer.enabled: false
+  cloud:
+    stream:
+      bindings:
+        order-placed-events-out-0:
+          destination: order-placed-events
+          binder: rabbit
+          content-type: application/json
+      binders:
+        rabbit:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: localhost
+                port: 5672
+                username: user
+                password: Z9blYNgMglo0CLNn
+                virtual-host: /
 server:
   address: 0.0.0.0  # 모든 네트워크 인터페이스에서 접근 허용
   port: 8080
@@ -73,6 +89,10 @@ feign:
         read-timeout: 3000
       inventory:
         endpoint: http://localhost:8100
+management:
+  health:
+    binders:
+      enabled: true
 ---
 spring:
   config:

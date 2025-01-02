@@ -12,17 +12,17 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 import java.util.Map;
 
-@Component
-public class RequestMappingLogger implements ApplicationListener<ContextRefreshedEvent> {
+//@Component
+//public class RequestMappingLogger implements ApplicationListener<ContextRefreshedEvent> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestMappingLogger.class);
+//    private static final Logger LOGGER = LoggerFactory.getLogger(RequestMappingLogger.class);
 
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        ApplicationContext applicationContext = event.getApplicationContext();
-        RequestMappingHandlerMapping requestMappingHandlerMapping = applicationContext
-                .getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class);
-        Map<RequestMappingInfo, HandlerMethod> map = requestMappingHandlerMapping.getHandlerMethods();
-        map.forEach((key, value) -> LOGGER.info("{} {}", key, value));
-    }
-}
+//    @Override
+//    public void onApplicationEvent(ContextRefreshedEvent event) {
+//        ApplicationContext applicationContext = event.getApplicationContext();
+//        RequestMappingHandlerMapping requestMappingHandlerMapping = applicationContext
+//                .getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class);
+//        Map<RequestMappingInfo, HandlerMethod> map = requestMappingHandlerMapping.getHandlerMethods();
+//        map.forEach((key, value) -> LOGGER.info("{} {}", key, value));
+//    }
+//}

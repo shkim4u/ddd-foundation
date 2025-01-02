@@ -61,3 +61,27 @@ undeploy-application:
 	@kubectl delete -f k8s/application/service.yaml
 	@kubectl delete -f k8s/application/deployment.yaml
 	@kubectl delete -f k8s/application/namespace.yaml
+
+install-helm:
+	@echo "Install Helm as per your OS"
+
+add-rabbitmq-helm-repo:
+	@helm repo add bitnami https://charts.bitnami.com/bitnami
+	@helm repo update
+
+install-rabbitmq:
+	@helm install rabbitmq bitnami/rabbitmq --namespace rabbitmq --create-namespace --wait
+	@kubectl get pods -n rabbitmq
+
+show-rabbitmq-credentials:
+	@echo "Username: user"
+	@echo "Password: $(shell kubectl get secret --namespace rabbitmq rabbitmq -o jsonpath="{.data.rabbitmq-password}" | base64 --decode)"
+	@echo "Configure port-forward, and then access to RabbitMQ Management UI URL at: http://localhost:15672"
+
+port-forward-rabbitmq-management-ui:
+	@echo "RabbitMQ Management UI is available at: http://localhost:15672"
+	@kubectl port-forward --namespace rabbitmq svc/rabbitmq 15672:15672
+
+port-forward-rabbitmq-amqp:
+	@echo "RabbitMQ AMQP port is available at: amqp://localhost:5672"
+	@kubectl port-forward --namespace rabbitmq svc/rabbitmq 5672:5672
