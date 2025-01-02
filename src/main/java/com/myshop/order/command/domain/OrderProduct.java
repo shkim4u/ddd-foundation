@@ -1,4 +1,4 @@
-package com.myshop.order.command.application;
+package com.myshop.order.command.domain;
 
 public class OrderProduct {
     private String productId;

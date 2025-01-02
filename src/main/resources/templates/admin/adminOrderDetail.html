@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<div th:replace="/fragments/layout :: header"></div>
+<div th:replace="fragments/layout :: header"></div>
 
 <div class="container">
     <nav aria-label="breadcrumb">
@@ -84,7 +84,7 @@
     <button th:if="${order.notYetShipped}" id="shippedBtn" class="btn btn-dark">배송 처리하기</button>
 </div>
 
-<div th:replace="/fragments/layout :: footer"></div>
+<div th:replace="fragments/layout :: footer"></div>
 
 <form id="goShppingForm" th:action="@{/admin/orders/{orderNumber}/shipping(orderNumber=${order.number})}" method="post">
     <input type="hidden" name="version" th:value="${order.version}">

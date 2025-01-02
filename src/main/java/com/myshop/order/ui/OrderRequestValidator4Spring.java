@@ -1,7 +1,7 @@
 package com.myshop.order.ui;
 
-import com.myshop.order.command.application.OrderProduct;
-import com.myshop.order.command.application.OrderRequest;
+import com.myshop.order.command.domain.OrderProduct;
+import com.myshop.order.command.domain.PlaceOrderCommand;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -9,17 +9,17 @@ import org.springframework.validation.Validator;
 public class OrderRequestValidator4Spring implements Validator {
     @Override
     public boolean supports(Class<?> aClass) {
-        return OrderRequest.class.isAssignableFrom(aClass);
+        return PlaceOrderCommand.class.isAssignableFrom(aClass);
     }
 
     @Override
     public void validate(Object o, Errors errors) {
-        OrderRequest orderReq = (OrderRequest) o;
-        if (orderReq.getOrderProducts() == null || orderReq.getOrderProducts().isEmpty()) {
+        PlaceOrderCommand placeOrderCommand = (PlaceOrderCommand) o;
+        if (placeOrderCommand.getOrderProducts() == null || placeOrderCommand.getOrderProducts().isEmpty()) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "orderProducts", "required");
         } else {
-            for (int i = 0; i < orderReq.getOrderProducts().size(); i++) {
-                OrderProduct orderProduct = orderReq.getOrderProducts().get(i);
+            for (int i = 0; i < placeOrderCommand.getOrderProducts().size(); i++) {
+                OrderProduct orderProduct = placeOrderCommand.getOrderProducts().get(i);
                 if (orderProduct.getProductId() == null || orderProduct.getProductId().trim().isEmpty()) {
                     errors.rejectValue("orderProducts[" + i + "].productId", "required");
                 }

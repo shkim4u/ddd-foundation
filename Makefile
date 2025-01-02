@@ -52,7 +52,9 @@ prepare-data:
 deploy-application:
 	@kubectl apply -f k8s/application/namespace.yaml
 	@kubectl apply -f k8s/application/deployment.yaml
+	@kubectl apply -f k8s/application/service.yaml
 
 undeploy-application:
+	@kubectl delete -f k8s/application/service.yaml
 	@kubectl delete -f k8s/application/deployment.yaml
 	@kubectl delete -f k8s/application/namespace.yaml

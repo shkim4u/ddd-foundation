@@ -1,5 +1,8 @@
-package com.myshop.order.command.application;
+package com.myshop.exceptions;
 
+import lombok.Getter;
+
+@Getter
 public class NoOrderProductException extends RuntimeException {
     private String productId;
 
@@ -7,7 +10,4 @@ public class NoOrderProductException extends RuntimeException {
         this.productId = productId;
     }
 
-    public String getProductId() {
-        return productId;
-    }
 }

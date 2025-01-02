@@ -5,6 +5,8 @@ import com.myshop.catalog.command.domain.product.Image;
 import com.myshop.catalog.command.domain.product.ProductId;
 import com.myshop.common.jpa.MoneyConverter;
 import com.myshop.common.model.Money;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.Set;
 @Entity
 @Table(name = "product")
 public class ProductData {
+    @Getter
     @EmbeddedId
     private ProductId id;
 
@@ -23,11 +26,14 @@ public class ProductData {
             joinColumns = @JoinColumn(name = "product_id"))
     private Set<CategoryId> categoryIds;
 
+    @Getter
     private String name;
 
+    @Getter
     @Convert(converter = MoneyConverter.class)
     private Money price;
 
+    @Getter
     private String detail;
 
     // TODO 목록에서 사용할 것
@@ -38,6 +44,12 @@ public class ProductData {
     @OrderColumn(name = "list_idx")
     private List<Image> images = new ArrayList<>();
 
+    // [2025-01-02] 김상현: 현재 재고 수량.
+    @Transient
+    @Getter
+    @Setter
+    private int inventoryQuantity;
+
     protected ProductData() {
     }
 
@@ -47,22 +59,6 @@ public class ProductData {
         this.price = price;
         this.detail = detail;
         this.images.addAll(images);
-    }
-
-    public ProductId getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Money getPrice() {
-        return price;
-    }
-
-    public String getDetail() {
-        return detail;
     }
 
     public List<Image> getImages() {

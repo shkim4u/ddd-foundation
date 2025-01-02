@@ -3,15 +3,15 @@ package com.myshop.order.ui;
 import com.myshop.catalog.query.product.ProductData;
 import com.myshop.catalog.query.product.ProductQueryService;
 import com.myshop.common.ValidationErrorException;
+import com.myshop.exceptions.NoOrderProductException;
 import com.myshop.member.command.domain.MemberId;
-import com.myshop.order.command.application.NoOrderProductException;
-import com.myshop.order.command.application.OrderProduct;
-import com.myshop.order.command.application.OrderRequest;
 import com.myshop.order.command.application.PlaceOrderService;
 import com.myshop.order.command.domain.OrderNo;
+import com.myshop.order.command.domain.OrderProduct;
 import com.myshop.order.command.domain.OrdererService;
-import com.myshop.order.query.application.outboundservices.ExternalInventoryService;
-import com.myshop.order.query.view.InventoryView;
+import com.myshop.order.command.domain.PlaceOrderCommand;
+import com.myshop.order.query.domain.service.OrderCheckResult;
+import com.myshop.order.query.domain.service.OrderDomainService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -32,40 +32,40 @@ public class OrderController {
     private ProductQueryService productQueryService;
     private PlaceOrderService placeOrderService;
     private OrdererService ordererService;
-    // [2024-12-27] 김상현: 재고 서비스 (외부 마이크로서비스)
-    private ExternalInventoryService externalInventoryService;
+    private OrderDomainService orderDomainService;
 
     public OrderController(ProductQueryService productQueryService,
                            PlaceOrderService placeOrderService,
                            OrdererService ordererService,
-                           ExternalInventoryService externalInventoryService) {
+                           OrderDomainService orderDomainService) {
         this.productQueryService = productQueryService;
         this.placeOrderService = placeOrderService;
         this.ordererService = ordererService;
-        this.externalInventoryService = externalInventoryService;
+        this.orderDomainService = orderDomainService;
     }
 
     @PostMapping("/orders/orderConfirm")
-    public String orderConfirm(@ModelAttribute("orderReq") OrderRequest orderRequest,
+    public String orderConfirm(@ModelAttribute("orderReq") PlaceOrderCommand placeOrderCommand,
                                ModelMap modelMap) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        orderRequest.setOrdererMemberId(MemberId.of(user.getUsername()));
-        populateProductsAndTotalAmountsModel(orderRequest, modelMap);
+        placeOrderCommand.setOrdererMemberId(MemberId.of(user.getUsername()));
+        populateProductsAndTotalAmountsModel(placeOrderCommand, modelMap);
         return "order/confirm";
     }
 
-    private void populateProductsAndTotalAmountsModel(OrderRequest orderRequest, ModelMap modelMap) {
-        List<ProductData> products = getProducts(orderRequest.getOrderProducts());
+    private void populateProductsAndTotalAmountsModel(PlaceOrderCommand placeOrderCommand, ModelMap modelMap) {
+        OrderCheckResult orderCheckResult = orderDomainService.canPlaceOrder(placeOrderCommand);
+        List<ProductData> products = orderCheckResult.getProducts();
         modelMap.addAttribute("products", products);
         int totalAmounts = 0;
-        for (int i = 0 ; i < orderRequest.getOrderProducts().size() ; i++) {
-            OrderProduct op = orderRequest.getOrderProducts().get(i);
+        for (int i = 0; i < placeOrderCommand.getOrderProducts().size() ; i++) {
+            OrderProduct op = placeOrderCommand.getOrderProducts().get(i);
             ProductData prod = products.get(i);
-            // [2024-12-27] 김상현: 재고 조회
-            InventoryView inventoryView = externalInventoryService.getInventory(prod.getId().getId());
             totalAmounts += op.getQuantity() * prod.getPrice().getValue();
         }
         modelMap.addAttribute("totalAmounts", totalAmounts);
+        // [2025-01-02] 김상현: 주문 가능 여부 확인 도메인 서비스 호출
+        modelMap.addAttribute("canPlaceOrder", orderCheckResult.isCanPlaceOrder());
     }
 
     private List<ProductData> getProducts(List<OrderProduct> orderProducts) {
@@ -79,13 +79,13 @@ public class OrderController {
     }
 
     @PostMapping("/orders/order")
-    public String order(@ModelAttribute("orderReq") OrderRequest orderRequest,
+    public String order(@ModelAttribute("orderReq") PlaceOrderCommand placeOrderCommand,
                         BindingResult bindingResult,
                         ModelMap modelMap) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        orderRequest.setOrdererMemberId(MemberId.of(user.getUsername()));
+        placeOrderCommand.setOrdererMemberId(MemberId.of(user.getUsername()));
         try {
-            OrderNo orderNo = placeOrderService.placeOrder(orderRequest);
+            OrderNo orderNo = placeOrderService.placeOrder(placeOrderCommand);
             modelMap.addAttribute("orderNo", orderNo.getNumber());
             return "order/orderComplete";
         } catch (ValidationErrorException e) {
@@ -96,7 +96,7 @@ public class OrderController {
                     bindingResult.reject(err.getCode());
                 }
             });
-            populateProductsAndTotalAmountsModel(orderRequest, modelMap);
+            populateProductsAndTotalAmountsModel(placeOrderCommand, modelMap);
             return "order/confirm";
         }
     }

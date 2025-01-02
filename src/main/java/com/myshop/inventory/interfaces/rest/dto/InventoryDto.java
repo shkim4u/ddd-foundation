@@ -1,4 +1,4 @@
-package com.myshop.order.infra.rest.dto;
+package com.myshop.inventory.interfaces.rest.dto;
 
 import lombok.*;
 

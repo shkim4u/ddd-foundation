@@ -58,6 +58,9 @@ logging:
     root: INFO
     com.myshop: DEBUG
     org.springframework.security: DEBUG
+    org.thymeleaf: DEBUG
+    org.thymeleaf.templateresolver: TRACE
+    org.thymeleaf.TemplateEngine: TRACE
 feign:
   httpclient:
     enabled: true
@@ -69,9 +72,7 @@ feign:
         connect-timeout: 3000
         read-timeout: 3000
       inventory:
-        # hosts 파일 수정 필요
-#        endpoint: http://192.168.8.176:8080
-        endpoint: http://localhost:8100/
+        endpoint: http://localhost:8100
 ---
 spring:
   config:
@@ -104,3 +105,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
+feign:
+  client:
+    config:
+      inventory:
+        endpoint: http://ddd-foundation-service.application

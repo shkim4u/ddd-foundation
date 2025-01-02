@@ -5,6 +5,7 @@ import com.myshop.catalog.command.domain.product.ProductId;
 import com.myshop.catalog.command.domain.product.ProductRepository;
 import com.myshop.common.ValidationError;
 import com.myshop.common.ValidationErrorException;
+import com.myshop.exceptions.NoOrderProductException;
 import com.myshop.order.command.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,26 +29,26 @@ public class PlaceOrderService {
     }
 
     @Transactional
-    public OrderNo placeOrder(OrderRequest orderRequest) {
-        List<ValidationError> errors = validateOrderRequest(orderRequest);
+    public OrderNo placeOrder(PlaceOrderCommand placeOrderCommand) {
+        List<ValidationError> errors = validatePlaceOrderCommand(placeOrderCommand);
         if (!errors.isEmpty()) throw new ValidationErrorException(errors);
 
         List<OrderLine> orderLines = new ArrayList<>();
-        for (OrderProduct op : orderRequest.getOrderProducts()) {
+        for (OrderProduct op : placeOrderCommand.getOrderProducts()) {
             Optional<Product> productOpt = productRepository.findById(new ProductId(op.getProductId()));
             Product product = productOpt.orElseThrow(() -> new NoOrderProductException(op.getProductId()));
             orderLines.add(new OrderLine(product.getId(), product.getPrice(), op.getQuantity()));
         }
         OrderNo orderNo = orderRepository.nextOrderNo();
-        Orderer orderer = ordererService.createOrderer(orderRequest.getOrdererMemberId());
+        Orderer orderer = ordererService.createOrderer(placeOrderCommand.getOrdererMemberId());
 
-        Order order = new Order(orderNo, orderer, orderLines, orderRequest.getShippingInfo(), OrderState.PAYMENT_WAITING);
+        Order order = new Order(orderNo, orderer, orderLines, placeOrderCommand.getShippingInfo(), OrderState.PAYMENT_WAITING);
         orderRepository.save(order);
         return orderNo;
     }
 
-    private List<ValidationError> validateOrderRequest(OrderRequest orderRequest) {
-        return new OrderRequestValidator().validate(orderRequest);
+    private List<ValidationError> validatePlaceOrderCommand(PlaceOrderCommand placeOrderCommand) {
+        return new OrderRequestValidator().validate(placeOrderCommand);
     }
 
 }

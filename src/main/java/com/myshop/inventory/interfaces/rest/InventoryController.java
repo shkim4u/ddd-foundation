@@ -2,8 +2,8 @@ package com.myshop.inventory.interfaces.rest;
 
 import com.myshop.inventory.application.queryservices.InventoryQueryService;
 import com.myshop.inventory.domain.model.view.InventoryView;
-import com.myshop.order.infra.rest.dto.AppObject;
-import com.myshop.order.infra.rest.dto.InventoryDto;
+import com.myshop.inventory.interfaces.rest.dto.AppObject;
+import com.myshop.inventory.interfaces.rest.dto.InventoryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
