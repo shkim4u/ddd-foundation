@@ -20,9 +20,13 @@ public class RequestMappingLogger implements ApplicationListener<ContextRefreshe
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         ApplicationContext applicationContext = event.getApplicationContext();
-        RequestMappingHandlerMapping requestMappingHandlerMapping = applicationContext
-                .getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class);
-        Map<RequestMappingInfo, HandlerMethod> map = requestMappingHandlerMapping.getHandlerMethods();
-        map.forEach((key, value) -> LOGGER.info("{} {}", key, value));
+        if (applicationContext.containsBean("requestMappingHandlerMapping")) {
+            RequestMappingHandlerMapping requestMappingHandlerMapping = applicationContext
+                    .getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class);
+            Map<RequestMappingInfo, HandlerMethod> map = requestMappingHandlerMapping.getHandlerMethods();
+            map.forEach((key, value) -> LOGGER.info("{} {}", key, value));
+        } else {
+            LOGGER.warn("Bean 'requestMappingHandlerMapping' not found in application context.");
+        }
     }
 }
