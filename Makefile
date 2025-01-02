@@ -17,6 +17,9 @@ delete-cluster:
 run-local-database:
 	@docker run --rm -d --name mysql -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 mysql:8.0.27
 
+delete-local-database:
+	@docker stop mysql
+
 install-database:
 	@kubectl apply -f k8s/database/namespace.yaml
 	@kubectl apply -f k8s/database/mysql-configmap.yaml
