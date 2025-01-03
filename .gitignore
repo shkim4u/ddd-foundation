@@ -34,3 +34,9 @@ build/
 
 ### Gracle ###
 .gradle/
+
+### RabbitMQ ###
+rabbitmq/
+
+### PostgreSQL ###
+postgresql/
