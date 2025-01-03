@@ -21,6 +21,6 @@ public class OrderEventHandler {
     public void handleOrderPlacedEvent(OrderPlacedEvent event) {
         inventoryCommandService.removeStock(event);
         // [2025-01-02] 김상현: (Experimental) 주문 이벤트를 RabbitMQ로 전송
-        streamBridge.send("order-placed-events-out-0", MessageBuilder.withPayload(event).build());
+        streamBridge.send("order-events-out-0", MessageBuilder.withPayload(event).build());
     }
 }

@@ -69,8 +69,17 @@ add-rabbitmq-helm-repo:
 	@helm repo add bitnami https://charts.bitnami.com/bitnami
 	@helm repo update
 
-install-rabbitmq:
+helm-install-rabbitmq:
 	@helm install rabbitmq bitnami/rabbitmq --namespace rabbitmq --create-namespace --wait
+	@kubectl get pods -n rabbitmq
+
+helm-fetch-rabbitmq:
+	@helm fetch bitnami/rabbitmq --untar
+	@echo "RabbitMQ Helm chart is fetched"
+	@echo "You can edit the rabbitmq/values.yaml file to customize the RabbitMQ deployment."
+
+helm-install-fetched-rabbitmq:
+	@helm install rabbitmq rabbitmq --namespace rabbitmq --create-namespace --wait
 	@kubectl get pods -n rabbitmq
 
 show-rabbitmq-credentials:
@@ -85,3 +94,25 @@ port-forward-rabbitmq-management-ui:
 port-forward-rabbitmq-amqp:
 	@echo "RabbitMQ AMQP port is available at: amqp://localhost:5672"
 	@kubectl port-forward --namespace rabbitmq svc/rabbitmq 5672:5672
+
+download-rabbitmqadmin:
+	@curl -Lo rabbitmq/rabbitmqadmin http://localhost:15672/cli/rabbitmqadmin
+	@chmod +x rabbitmq/rabbitmqadmin
+
+configure-rabbitmq-exchange-queue:
+	@echo "Creating the exchange with name 'order.events'..."
+	@rabbitmq/rabbitmqadmin -u user -p rabbitmq declare exchange name=order.events type=topic durable=true
+	@echo "Creating the queue with name 'order.queue'..."
+	@rabbitmq/rabbitmqadmin -u user -p rabbitmq declare queue name=order.queue durable=true
+	@echo "Binding the queue to the exchange with the routing key '#'..."
+	@rabbitmq/rabbitmqadmin -u user -p rabbitmq declare binding source=order.events destination=order.queue routing_key=#
+
+helm-fetch-postgresql:
+	@helm fetch bitnami/postgresql --untar
+	@echo "PostgreSQL Helm chart is fetched"
+	@echo "You can edit the postgresql/values.yaml file to customize the PostgreSQL deployment."
+	@echo "Typically, you may want to change the 'auth.postgresPassword' and 'auth.database' values, for example, 'auth.postgresPassword: postgres' and 'auth.database: inventory' respectively."
+
+helm-install-fetched-postgresql:
+	@helm install postgresql postgresql --namespace postgresql --create-namespace --wait
+	@kubectl get pods -n postgresql

@@ -43,8 +43,8 @@ spring:
   cloud:
     stream:
       bindings:
-        order-placed-events-out-0:
-          destination: order-placed-events
+        order-events-out-0:
+          destination: order.events
           binder: rabbit
           content-type: application/json
       binders:
@@ -56,7 +56,7 @@ spring:
                 host: localhost
                 port: 5672
                 username: user
-                password: Z9blYNgMglo0CLNn
+                password: rabbitmq
                 virtual-host: /
 server:
   address: 0.0.0.0  # 모든 네트워크 인터페이스에서 접근 허용
