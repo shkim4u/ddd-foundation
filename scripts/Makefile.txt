@@ -1,0 +1,9 @@
+* Helm install RabbitMQ with custom credentials and some additional configurations
+	@#helm install rabbitmq rabbitmq --namespace rabbitmq --create-namespace --wait --set auth.username=user --set auth.password=rabbitmq --set extraEnvVars[0].name=RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS --set extraEnvVars[0].value="-rabbitmq_management path_prefix '/rabbitmq'" --set readinessProbe.httpGet.path="/rabbitmq/api/health/checks/virtual-hosts"
+
+* Helm install Nginx Ingress Controller
+	@helm install nginx-ingress ingress-nginx/ingress-nginx -n nginx-ingress --create-namespace
+
+* Helm uninstall Nginx Ingress Controller
+#	@helm uninstall nginx-ingress -n nginx-ingress
+#	@kubectl delete ns nginx-ingress

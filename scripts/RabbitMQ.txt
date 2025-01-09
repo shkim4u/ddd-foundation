@@ -1,0 +1,2 @@
+* Management UI 경로 변경
+https://github.com/docker-library/rabbitmq/issues/249

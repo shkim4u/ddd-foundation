@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: ddd-foundation-ingress
   namespace: application
+#  annotations:
+#    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
@@ -33,10 +35,9 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: rabbitmq
-      http:
+    - http:
         paths:
-          - path: /
+          - path: /rabbitmq
             pathType: Prefix
             backend:
               service:

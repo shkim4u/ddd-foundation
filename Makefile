@@ -58,12 +58,14 @@ install-rabbitmq-k8s:
 	@echo "Fetching the RabbitMQ Helm chart..."
 	@helm fetch bitnami/rabbitmq --untar
 	@echo "Modifying the rabbitmq/values.yaml file to customize RabbitMQ credentials..."
-	@yq e '.auth.username = "user"' -i rabbitmq/values.yaml
-	@yq e '.auth.password = "rabbitmq"' -i rabbitmq/values.yaml
 	@echo "Installing the RabbitMQ Helm chart..."
-	@helm install rabbitmq rabbitmq --namespace rabbitmq --create-namespace --wait
+	@helm install rabbitmq rabbitmq --namespace rabbitmq --create-namespace --set auth.username=user --set auth.password=rabbitmq --wait
 	@kubectl get pods -n rabbitmq
 	@echo "RabbitMQ is installed successfully, now proceed to configure the exchange by running 'make port-forward-rabbitmq-management-ui', make 'download-rabbitmqadmin', and make 'make 'configure-rabbitmq-exchange-queue'."
+
+uninstall-rabbitmq-k8s:
+	@helm uninstall rabbitmq -n rabbitmq
+	@kubectl delete ns rabbitmq
 
 helm-install-rabbitmq:
 	@helm install rabbitmq bitnami/rabbitmq --namespace rabbitmq --create-namespace --wait
@@ -105,12 +107,9 @@ configure-rabbitmq-exchange-queue:
 	@rabbitmq/rabbitmqadmin -u user -p rabbitmq declare binding source=order.events destination=order.queue routing_key=#
 
 install-nginx-ingress-controller:
-#	@helm install nginx-ingress ingress-nginx/ingress-nginx -n nginx-ingress --create-namespace
-	@kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml
+	@kubectl apply -f k8s/cluster/deploy-ingress-nginx.yaml
 
 uninstall-nginx-ingress-controller:
-#	@helm uninstall nginx-ingress -n nginx-ingress
-#	@kubectl delete ns nginx-ingress
 	@kubectl delete -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml
 
 build:

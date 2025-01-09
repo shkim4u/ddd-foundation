@@ -1,5 +1,5 @@
 # 2 Nodes (1 control plane + 1 worker nodes)
-# Worker node exposes ports 80, 443, and 15672 (RabbitMQ management console)
+# Worker node exposes ports 80, 443.
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
