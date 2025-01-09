@@ -30,10 +30,10 @@ spec:
   rules:
     - http:
         paths:
-          - path: /
+          - path: /rabbitmq
             pathType: Prefix
             backend:
               service:
                 name: rabbitmq
                 port:
-                  number: 80
+                  number: 15672
