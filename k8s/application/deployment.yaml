@@ -20,6 +20,8 @@ spec:
         ports:
         - containerPort: 8080
         env:
+        - name: JAVA_TOOL_OPTIONS
+          value: "-Xms256m -Xmx512m -Dspring.profiles.active=dev"
         - name: DATABASE_HOST
           value: "mysql.database"
         - name: DATABASE_PORT
@@ -32,8 +34,16 @@ spec:
           value: "shop"
         - name: PROFILE
           value: "dev"
-#        - name: JAVA_OPTS
-#          value: "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}"
+        - name: INVENTORY_SERVICE_HOST
+          value: "inventory-service.inventory"
+        - name: RABBITMQ_HOST
+          value: "rabbitmq.rabbitmq"
+        - name: RABBITMQ_PORT
+          value: "5672"
+        - name: RABBITMQ_USERNAME
+          value: "user"
+        - name: RABBITMQ_PASSWORD
+          value: "rabbitmq"
         resources:
           requests:
             cpu: "250m"

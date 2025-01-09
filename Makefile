@@ -1,5 +1,4 @@
 APP_NAME:=ddd-foundation
-VERSION:=$(shell cat build.gradle | grep "version =" | awk -F"'" '{print $$2}')
 
 .PHONY: build
 
@@ -20,7 +19,18 @@ run-local-database:
 delete-local-database:
 	@docker stop mysql
 
-install-database:
+install-tools:
+	@echo "Installing helm..."
+	@brew install helm
+	@echo "Installing yq..."
+	@brew install yq
+
+helm-add-repos:
+	@helm repo add bitnami https://charts.bitnami.com/bitnami
+	@helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+	@helm repo update
+
+install-database-k8s:
 	@kubectl apply -f k8s/database/namespace.yaml
 	@kubectl apply -f k8s/database/mysql-configmap.yaml
 	@kubectl apply -f k8s/database/mysql-service.yaml
@@ -31,7 +41,7 @@ init-database:
 	@mysql -h 127.0.0.1 -u root < src/sql/ddl.sql
 	@mysql -h 127.0.0.1 -u root < src/sql/init.sql
 
-uninstall-database:
+uninstall-database-k8s:
 	@kubectl delete -f k8s/database/mysql-statefulset.yaml || true
 	@kubectl delete pvc data-mysql-0 -n database || true
 	@kubectl delete pvc data-mysql-1 -n database || true
@@ -40,34 +50,20 @@ uninstall-database:
 	@kubectl delete -f k8s/database/mysql-configmap.yaml || true
 	@kubectl delete -f k8s/database/namespace.yaml || true
 
-build:
-	@./gradlew clean build --no-daemon -x test
+run-local-rabbitmq:
+	@docker run --rm -d --name rabbitmq -e RABBITMQ_DEFAULT_USER=user -e RABBITMQ_DEFAULT_PASS=rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:management
 
-build-container-image:
-	@docker build -t ddd-foundation:latest .
-
-load-container-image:
-	@kind load docker-image ddd-foundation:latest --name ddd-foundation
-
-prepare-data:
-	@echo "Prepare data before moving on..."
-
-deploy-application:
-	@kubectl apply -f k8s/application/namespace.yaml
-	@kubectl apply -f k8s/application/deployment.yaml
-	@kubectl apply -f k8s/application/service.yaml
-
-undeploy-application:
-	@kubectl delete -f k8s/application/service.yaml
-	@kubectl delete -f k8s/application/deployment.yaml
-	@kubectl delete -f k8s/application/namespace.yaml
-
-install-helm:
-	@echo "Install Helm as per your OS"
-
-add-rabbitmq-helm-repo:
-	@helm repo add bitnami https://charts.bitnami.com/bitnami
-	@helm repo update
+install-rabbitmq-k8s:
+	@rm -rf rabbitmq || true
+	@echo "Fetching the RabbitMQ Helm chart..."
+	@helm fetch bitnami/rabbitmq --untar
+	@echo "Modifying the rabbitmq/values.yaml file to customize RabbitMQ credentials..."
+	@yq e '.auth.username = "user"' -i rabbitmq/values.yaml
+	@yq e '.auth.password = "rabbitmq"' -i rabbitmq/values.yaml
+	@echo "Installing the RabbitMQ Helm chart..."
+	@helm install rabbitmq rabbitmq --namespace rabbitmq --create-namespace --wait
+	@kubectl get pods -n rabbitmq
+	@echo "RabbitMQ is installed successfully, now proceed to configure the exchange by running 'make port-forward-rabbitmq-management-ui', make 'download-rabbitmqadmin', and make 'make 'configure-rabbitmq-exchange-queue'."
 
 helm-install-rabbitmq:
 	@helm install rabbitmq bitnami/rabbitmq --namespace rabbitmq --create-namespace --wait
@@ -96,6 +92,7 @@ port-forward-rabbitmq-amqp:
 	@kubectl port-forward --namespace rabbitmq svc/rabbitmq 5672:5672
 
 download-rabbitmqadmin:
+	@mkdir -p rabbitmq || true
 	@curl -Lo rabbitmq/rabbitmqadmin http://localhost:15672/cli/rabbitmqadmin
 	@chmod +x rabbitmq/rabbitmqadmin
 
@@ -107,12 +104,38 @@ configure-rabbitmq-exchange-queue:
 	@echo "Binding the queue to the exchange with the routing key '#'..."
 	@rabbitmq/rabbitmqadmin -u user -p rabbitmq declare binding source=order.events destination=order.queue routing_key=#
 
-helm-fetch-postgresql:
-	@helm fetch bitnami/postgresql --untar
-	@echo "PostgreSQL Helm chart is fetched"
-	@echo "You can edit the postgresql/values.yaml file to customize the PostgreSQL deployment."
-	@echo "Typically, you may want to change the 'auth.postgresPassword' and 'auth.database' values, for example, 'auth.postgresPassword: postgres' and 'auth.database: inventory' respectively."
+install-nginx-ingress-controller:
+#	@helm install nginx-ingress ingress-nginx/ingress-nginx -n nginx-ingress --create-namespace
+	@kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml
 
-helm-install-fetched-postgresql:
-	@helm install postgresql postgresql --namespace postgresql --create-namespace --wait
-	@kubectl get pods -n postgresql
+uninstall-nginx-ingress-controller:
+#	@helm uninstall nginx-ingress -n nginx-ingress
+#	@kubectl delete ns nginx-ingress
+	@kubectl delete -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml
+
+build:
+	@./gradlew clean build --no-daemon -x test
+
+build-container-image:
+	@docker build -t ddd-foundation:latest .
+
+load-container-image:
+	@echo "Loading the Shop container image onto the Kind Kubernetes cluster..."
+	@kind load docker-image ddd-foundation:latest --name ddd-foundation
+
+prepare-data:
+	@echo "Prepare data before moving on..."
+
+deploy-application:
+	@kubectl apply -f k8s/application/namespace.yaml
+	@kubectl apply -f k8s/application/deployment.yaml
+	@kubectl apply -f k8s/application/service.yaml
+	@kubectl apply -f k8s/application/ingress.yaml
+
+undeploy-application:
+	@kubectl delete -f k8s/application/ingress.yaml
+	@kubectl delete -f k8s/application/service.yaml
+	@kubectl delete -f k8s/application/deployment.yaml
+	@kubectl delete -f k8s/application/namespace.yaml
+
+

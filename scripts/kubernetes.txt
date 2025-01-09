@@ -1,0 +1,7 @@
+* Nginxx 인그레서 컨트롤러 설치 - 노드 설렉터, 톨러레이션 설정
+
+helm install nginx-ingress ingress-nginx/ingress-nginx -n nginx-ingress --create-namespace
+
+helm install nginx-ingress ingress-nginx/ingress-nginx -n nginx-ingress --create-namespace --set controller.nodeSelector."kubernetes\.io/hostname"=ddd-foundation-worker --set controller.tolerations[0].key="node-role.kubernetes.io/control-plane" --set controller.tolerations[0].operator="Exists" --set controller.tolerations[0].effect="NoSchedule"
+
+helm uninstall nginx-ingress -n nginx-ingress

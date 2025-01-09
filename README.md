@@ -1,4 +1,4 @@
-# 도메인 주도 개발 시작하기 예제 코드
+# ***도메인 주도 개발 시작하기 예제 코드***
 
 DDD START!의 재출간판인 [도메인 주도 개발 시작하기](https://www.hanbit.co.kr/store/books/look.php?p_code=B4309942517) 책의 예제 코드입니다.
 
@@ -21,7 +21,7 @@ DDD START!의 재출간판인 [도메인 주도 개발 시작하기](https://www
 
 ---
 
-### 사전 준비 사항
+## 사전 준비 사항
 
 1. `Java 17` 설치
 2. `Git` 설치
@@ -34,7 +34,7 @@ DDD START!의 재출간판인 [도메인 주도 개발 시작하기](https://www
 
 ---
 
-## 단독 실행 테스트
+## 1. **단독 실행 테스트**
 
 1. 데이터베이스 실행
 
@@ -56,57 +56,119 @@ docker run --rm --name mysql -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -v ~/data/
 
 ---
 
-## 로컬 쿠버네테스 클러스터 (`Kind`)를 이용한 배포
+## 2. **쿠버네테스 클러스터 (`Kind`)를 이용한 배포**
 
-1. 쿠버네테스 클러스터 생성
-
-```bash
-make cluster
-```
-
-2. 데이터베이스 (`MySQL`) 배포
+### 2.1. **툴셋 설정 및 쿠버네테스 클러스터 생성**
 
 ```bash
-make install-database
+make install-tools helm-add-repos
+make create-cluster
 ```
 
-3. 소스 빌드
+### 2.2. **데이터베이스 배포 (`MySQL`)**
 
 ```bash
-make build-source
+make install-database-k8s
 ```
 
-4. 컨테이너 이미지 빌드
+### 2.3. ** RabbitMQ 배포 및 설치**
+
+1. `RabbitMQ` 배포
+
+```bash
+make install-rabbitmq-k8s
+```
+
+2. `RabbitMQ` 관리 UI 포트 포워딩
+
+```bash
+make port-forward-rabbitmq-management-ui
+```
+
+3. **RabbitMQ Exchange 및 Queue 생성**
+
+> 📌(참고)📌<br>
+> 위에서 Port Forwarding을 수행한 터미널이 아닌 새로운 터미널을 열어서 아래 명령어를 수행합니다.
+
+```bash
+make download-rabbitmqadmin
+make configure-rabbitmq-exchange-queue
+```
+
+4. **RabbitMQ 관리 UI 포트 포워딩 종료**
+
+앞서 실행한 `make port-forward-rabbitmq-management-ui` 명령어를 종료합니다 (Ctrl + C).
+
+
+### 2.4. **인그레스 설정**
+
+1. `Nginx Ingress Controller` 설치
+
+```bash
+make install-nginx-ingress-controller
+````
+
+### 2.5. **애플리케이션 빌드 및 배포**
+
+1. 소스 빌드
+
+```bash
+make build
+```
+
+2. 컨테이너 이미지 빌드
 
 ```bash
 make build-container-image
 ```
-5. 컨테이너 이미지 노드에 적재
+
+3. 빌드된 컨테이너 이미지 노드에 적재
 
 ```bash
 make load-container-image
 ````
 
-6. 데이터베이스 스키마 및 초기 데이터 생성
-
-> 📌(참고)📌<br>
-> `IntelliJ` 혹은 데이터베이스 관리 도구를 사용하여 데이터베이스 스키마를 생성하고 초기 데이터를 입력합니다.
-
-7. `DDD Foundation` 애플리케이션 배포
+4. `DDD Foundation` 애플리케이션 배포
 
 ```bash
 make deploy-application
 ```
 
+5. 테스트
+
+```bash
+curl -fsSL http://localhost
+```
+
+6. (참고) `DDD Foundation` 애플리케이션 배포 삭제
+
+```bash
+make undeploy-application
+```
+
 ---
 
-## 자원 정리
+## 3. **자원 정리**
 1. `Kind` 클러스터 삭제
 
 ```bash
 kind delete cluster --name metsys-cluster
 ```
 
+---
 
-## 추가 수행 사항
-1. `Flyway`를 이용한 데이터베이스 관리
+## 4. **추가 수행 사항**
+1. (DONE) `Flyway`를 이용한 데이터베이스 관리
+2. (DONE) `RabbitMQ`를 이용한 이벤트 드리븐 아키텍처 구현
+   * `Avro` 스키마 파일 Git Submodule로 추가
+3. (DONE) `인벤토리 서비스 애플리케이션` 분리
+   * Gradle 멀티 프로젝트
+   * Polyglot 데이터베이스 (PostgreSQL)
+   * 멀티 스테이지 컨테이너 빌드
+4. `GitOps`를 이용한 애플리케이션 배포
+   * `ArgoCD` 혹은 `Flux`
+   * `Argo Rollouts`를 이용한 배포 전략 적용 - Canary, Blue-Green, A/B Testing 등
+5. (TODO) `TDD (Test-Driven Development)` 및 테스트 자동화
+6. (TODO) 코드 커버리지 목표 설정 및 방법론 적용
+7. (TODO) 성능/부하 테스트
+8. (TODO) 점진적 전환 전략 및 기술 체계

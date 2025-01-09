@@ -15,9 +15,5 @@ COPY build/libs/${APP_NAME}-${APP_VERSION}.jar /app.jar
 RUN chmod +x /app.jar
 
 ENV LC_ALL=C.UTF-8
-ENV PROFILE="default"
 
-COPY docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
-
-ENTRYPOINT ["./docker-entrypoint.sh"]
+ENTRYPOINT ["java", "-jar", "/app.jar"]

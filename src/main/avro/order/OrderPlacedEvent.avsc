@@ -1,0 +1,35 @@
+{
+  "namespace": "com.myshop.shareddomain.event.order",
+  "type": "record",
+  "name": "OrderPlacedEvent",
+  "fields": [
+    {"name": "number", "type": "string"},
+    {"name": "orderer", "type": {
+      "type": "record",
+      "name": "Orderer",
+      "fields": [
+        {"name": "memberId", "type": {
+          "type": "record",
+          "name": "MemberId",
+          "fields": [
+            {"name": "id", "type": "string"}
+          ]
+        }},
+        {"name": "name", "type": "string"}
+      ]
+    }},
+    {"name": "orderLines", "type": {
+      "type": "array",
+      "items": {
+        "type": "record",
+        "name": "OrderLine",
+        "fields": [
+          {"name": "productId", "type": "string"},
+          {"name": "quantity", "type": "int"},
+          {"name": "price", "type": "int"}
+        ]
+      }
+    }},
+    {"name": "orderDate", "type": {"type": "long", "logicalType": "timestamp-millis"}}
+  ]
+}

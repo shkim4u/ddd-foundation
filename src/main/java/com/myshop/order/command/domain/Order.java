@@ -3,11 +3,15 @@ package com.myshop.order.command.domain;
 import com.myshop.common.event.Events;
 import com.myshop.common.jpa.MoneyConverter;
 import com.myshop.common.model.Money;
+import com.myshop.shareddomain.event.order.OrderPlacedEvent;
+import com.myshop.utils.DateTimeUtil;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "purchase_order")
@@ -52,7 +56,10 @@ public class Order extends AbstractAggregateRoot<Order> {
         setShippingInfo(shippingInfo);
         this.state = state;
         this.orderDate = LocalDateTime.now();
-        OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(number.getNumber(), orderer, orderLines, orderDate);
+//        OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(number.getNumber(), orderer, orderLines, orderDate);
+        // 도메인 이벤트 발행
+        com.myshop.shareddomain.event.order.OrderPlacedEvent orderPlacedEvent = toOrderPlacedEvent();
+
 //        Events.raise(orderPlacedEvent);
         // 도메인 이벤트 발행
         registerEvent(orderPlacedEvent);
@@ -167,5 +174,29 @@ public class Order extends AbstractAggregateRoot<Order> {
         }
         this.state = newState;
         registerEvent(new OrderStateChangedEvent(number.getNumber(), newState));
+    }
+
+    public OrderPlacedEvent toOrderPlacedEvent() {
+        com.myshop.shareddomain.event.order.Orderer orderer = new com.myshop.shareddomain.event.order.Orderer(
+                new com.myshop.shareddomain.event.order.MemberId(this.orderer.getMemberId().getId()),
+                this.orderer.getName()
+        );
+
+        List<com.myshop.shareddomain.event.order.OrderLine> orderLines = this.orderLines.stream()
+                .map(orderLine -> new com.myshop.shareddomain.event.order.OrderLine(
+                        orderLine.getProductId().getId(),
+                        orderLine.getQuantity(),
+                        orderLine.getPrice().getValue()
+                ))
+                .collect(Collectors.toList());
+
+        String formattedOrderDate = DateTimeUtil.formatToIso8601WithMillis(this.orderDate);
+
+        return OrderPlacedEvent.newBuilder()
+                .setNumber(this.number.getNumber())
+                .setOrderer(orderer)
+                .setOrderLines(orderLines)
+                .setOrderDate(Instant.parse(formattedOrderDate + "Z"))
+                .build();
     }
 }

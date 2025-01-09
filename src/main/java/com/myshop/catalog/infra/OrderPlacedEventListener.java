@@ -1,13 +1,14 @@
 package com.myshop.catalog.infra;
 
-import com.myshop.order.command.domain.OrderPlacedEvent;
+import com.myshop.shareddomain.event.order.OrderPlacedEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class OrderPlacedEventListener {
     private final StreamBridge streamBridge;
@@ -18,8 +19,8 @@ public class OrderPlacedEventListener {
     }
 
     @EventListener
-//    @Async
     public void handle(OrderPlacedEvent event) {
-        System.out.println("OrderPlacedEvent handled: " + event.getNumber());
+        log.info("Sending OrderPlacedEvent to the event stream bridge: {}", event);
+        streamBridge.send("order-events-out-0", MessageBuilder.withPayload(event).build());
     }
 }

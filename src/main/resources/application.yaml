@@ -46,7 +46,7 @@ spring:
         order-events-out-0:
           destination: order.events
           binder: rabbit
-          content-type: application/json
+          content-type: application/avro
       binders:
         rabbit:
           type: rabbit
@@ -60,7 +60,7 @@ spring:
                 virtual-host: /
 server:
   address: 0.0.0.0  # 모든 네트워크 인터페이스에서 접근 허용
-  port: 8080
+  port: ${PORT:8080}
   internal-port: 8100
   servlet:
     context-path: /
@@ -72,6 +72,8 @@ server:
 logging:
   level:
     root: INFO
+    org.springframework.amqp: DEBUG
+    org.springframework.rabbit: DEBUG
     com.myshop: DEBUG
     org.springframework.security: DEBUG
     org.thymeleaf: DEBUG
@@ -88,7 +90,7 @@ feign:
         connect-timeout: 3000
         read-timeout: 3000
       inventory:
-        endpoint: http://localhost:8100
+        endpoint: http://localhost:8200
 management:
   health:
     binders:
@@ -125,8 +127,21 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
+  cloud:
+    stream:
+      binders:
+        rabbit:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: ${RABBITMQ_HOST:rabbitmq.rabbitmq}
+                port: ${RABBITMQ_PORT:5672}
+                username: ${RABBITMQ_USERNAME:user}
+                password: ${RABBITMQ_PASSWORD:rabbitmq}
+                virtual-host: /
 feign:
   client:
     config:
       inventory:
-        endpoint: http://ddd-foundation-service.application
+        endpoint: http://${INVENTORY_SERVICE_HOST:inventory-service.inventory}
