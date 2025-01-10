@@ -17,8 +17,5 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient(name = "inventory", url = "${feign.client.config.inventory.endpoint}", configuration = InventoryFeignConfig.class)
 public interface InventoryFeignClient {
     @GetMapping(value = "/inventory/v1/{productId}")
-//    @GetMapping(value = "/orders/order")
     ResponseEntity<AppObject<InventoryDto>> getInventory(@PathVariable("productId") String productId);
-//    @RequestMapping(method = RequestMethod.GET, value = "/inventory/v1/{productId}", consumes = "application/json", produces = "application/json")
-//    ResponseEntity<AppObject<InventoryDto>> getInventory(@PathVariable(value = "productId") String productId);
 }
