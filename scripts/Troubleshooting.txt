@@ -1,0 +1,25 @@
+* Nginx Installation Issues
+GCP Outage Issue
+https://github.com/kubernetes/registry.k8s.io/issues/234
+
+Events:                                                                                                                                  │
+│   Type     Reason     Age                From               Message                                                                      │
+│   ----     ------     ----               ----               -------                                                                      │
+│   Normal   Scheduled  78s                default-scheduler  Successfully assigned ingress-nginx/ingress-nginx-admission-patch-qtfl6 to d │
+│ dd-foundation-worker                                                                                                                     │
+│   Warning  Failed     55s                kubelet            Failed to pull image "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1. │
+│ 5.0@sha256:aaafd456bda110628b2d4ca6296f38731a3aaf0bf7581efae824a41c770a8fc4": failed to pull and unpack image "registry.k8s.io/ingress-n │
+│ ginx/kube-webhook-certgen@sha256:aaafd456bda110628b2d4ca6296f38731a3aaf0bf7581efae824a41c770a8fc4": failed to copy: httpReadSeeker: fail │
+│ ed open: unexpected status code https://registry.k8s.io/v2/ingress-nginx/kube-webhook-certgen/blobs/sha256:0baecf37abeec25aad5f5bb99f3fa │
+│ 20e90f15361468ef5b66fae93e9c8283c3d: 503 Service Unavailable                                                                             │
+│   Normal   Pulling    33s (x3 over 78s)  kubelet            Pulling image "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.5.0@sha │
+│ 256:aaafd456bda110628b2d4ca6296f38731a3aaf0bf7581efae824a41c770a8fc4"                                                                    │
+│   Warning  Failed     32s (x2 over 74s)  kubelet            Failed to pull image "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1. │
+│ 5.0@sha256:aaafd456bda110628b2d4ca6296f38731a3aaf0bf7581efae824a41c770a8fc4": failed to pull and unpack image "registry.k8s.io/ingress-n │
+│ ginx/kube-webhook-certgen@sha256:aaafd456bda110628b2d4ca6296f38731a3aaf0bf7581efae824a41c770a8fc4": failed to copy: httpReadSeeker: fail │
+│ ed open: unexpected status code https://registry.k8s.io/v2/ingress-nginx/kube-webhook-certgen/manifests/sha256:aaafd456bda110628b2d4ca62 │
+│ 96f38731a3aaf0bf7581efae824a41c770a8fc4: 503 Service Unavailable                                                                         │
+│   Warning  Failed     32s (x3 over 74s)  kubelet            Error: ErrImagePull                                                          │
+│   Normal   BackOff    9s (x4 over 74s)   kubelet            Back-off pulling image "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v │
+│ 1.5.0@sha256:aaafd456bda110628b2d4ca6296f38731a3aaf0bf7581efae824a41c770a8fc4"                                                           │
+│   Warning  Failed     9s (x4 over 74s)   kubelet            Error: ImagePullBackOff
